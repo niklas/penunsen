@@ -1,0 +1,18 @@
+Autotest.add_hook :initialize do |at|
+  # Ignore these files
+  %w{
+    .hg .git .svn stories tmtags Rakefile Capfile README .html
+    spec/spec.opts spec/rcov.opts vendor/gems autotest svn-commit .DS_Store
+  }.each {|exception|at.add_exception(exception)}
+
+  # Map concerned_with files properly.
+  # app/models/[model]/[concern].rb should map to 
+  # spec/models/[model]/[concern]_spec.rb
+  at.add_mapping(/app\/models\/[a-z_]*\/.*\.rb/) do |f, _|
+    at.files_matching(/spec\/models\/$1\/$2_spec\.rb/)
+  end
+
+  at.add_mapping(%r~lib/ratio_formular.treetop~) do
+    at.files_matching %r~spec/models/.*definition_spec.rb~
+  end
+end
