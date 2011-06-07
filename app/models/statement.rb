@@ -15,4 +15,8 @@ class Statement < ActiveRecord::Base
       raise("do not know how to handle funds_code #{funds_code}")
     end
   end
+
+  def entered_at
+    entered_on.to_time
+  end
 end

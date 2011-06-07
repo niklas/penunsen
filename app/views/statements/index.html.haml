@@ -1,5 +1,7 @@
 %h2= account.number
 
+#plot
+
 %table.statements
   %thead
     %tr
@@ -7,8 +9,10 @@
       %th Entry date
       %th Info
   %tbody
+    - balance = 0
     - account.statements.each do |s|
-      %tr
+      - balance += s.amount_with_sign
+      %tr{:class => dom_id(s), :data => { :balance => balance, :entered_at => s.entered_at.to_s(:db) }}
         %td.amount{:class => s.funds_code}= amount_tag s.amount_with_sign
         %td.entered_on= s.entered_on
         - if s.account_holder.present?
