@@ -66,3 +66,5 @@ gem 'simple_form'
 
 gem "nifty-generators"
 gem 'bistro_car'
+
+gem 'mt940_parser', :require => 'mt940'

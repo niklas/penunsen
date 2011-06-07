@@ -1,0 +1,40 @@
+source = ARGV.shift || raise("please give path to mt940 file")
+
+
+parsed = MT940.parse IO.read(source)
+
+
+account = statement = nil
+Account.transaction do
+  parsed.each do |array|
+    array.each do |e|
+      case e
+      when MT940::Account
+        account   = BankAccount.find_or_create_by_number_and_bank_code(e.account_number, e.bank_code)
+        statement = nil
+      when MT940::StatementLine
+        statement = account.statements.create!(
+          :entered_on => e.entry_date, 
+          :amount => e.amount, 
+          :funds_code => e.funds_code
+        )
+      when MT940::StatementLineInformation
+        statement.update_attributes!({
+          :account_holder => e.account_holder,
+          :account_number => e.account_number,
+          :bank_code      => e.bank_code,
+          :prima_nota     => e.prima_nota,
+          :description    => e.transaction_description,
+          :details        => e.details
+        })
+      when MT940::AccountBalance
+        if statement
+          statement.update_attributes!({
+            :balance_sign   => e.sign,
+            :balance_amount => e.amount
+          })
+        end
+      end
+    end
+  end
+end
