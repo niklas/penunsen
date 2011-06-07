@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'mt940'
+require 'yaml'
+require 'set'
+
+source = ARGV.shift || raise("please give path to mt940 file")
+
+parsed = MT940.parse IO.read(source)
+
+fields = Set.new
+
+
+last = nil
+parsed.each do |a|
+  a.each do |e|
+    case e
+    when MT940::StatementLine
+      puts "#{e.date} : #{e.funds_code} #{e.amount}"
+    when MT940::StatementLineInformation
+      puts "#{e.account_holder}: #{e.account_number}/#{e.bank_code} (#{e.prima_nota})"
+      puts "[#{e.transaction_description}]\n#{e.details}"
+      puts
+    when MT940::AccountBalance
+      puts "((( #{e.sign} #{e.amount}"
+    when MT940::ClosingBalance
+      raise "nicht bei berliner sparkasse"
+    else
+      puts " --- #{e.class}"
+    end
+    last = e.class
+  end
+end
+
