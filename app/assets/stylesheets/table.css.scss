@@ -1,0 +1,38 @@
+$table-bg: #eee;
+
+table.statements {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: 80%;
+  tr {
+    &:nth-child(odd) {
+      background-color: lighten($table-bg, 3);
+    }
+    &:nth-child(even) {
+      background-color: darken($table-bg, 3);
+    }
+  }
+  td {
+    padding: 0 0.5em;
+    &.amount {
+      font-weight: bold;
+      text-align: right;
+      font-size: 125%;
+      &.debit, &.return_debit {
+        color: red;
+      }
+      &.credit, &.return_credit {
+        color: green;
+      }
+    }
+    &.entered_on {
+      width: 5.5em;
+      text-align: center;
+    }
+    &.name, &.details {
+      font-family: "Helvetica", "Arial", sans-serif;
+      line-height: 200%;
+    }
+  }
+}

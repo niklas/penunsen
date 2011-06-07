@@ -7,3 +7,4 @@ tmp/**/*
 *.swo
 capybara-*.html
 public/stylesheets/application.css
+.sass-cache

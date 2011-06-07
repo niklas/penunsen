@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.1'
+gem 'rails', '3.1.0.rc1'
 gem 'sqlite3-ruby', :require => 'sqlite3'
 
 # Use unicorn as the web server
@@ -11,41 +11,40 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 
 # To use debugger
 # gem 'ruby-debug'
+#
+gem 'sass'
+gem 'haml'
+gem 'coffee-script'
+gem 'uglifier'
+
+gem 'jquery-rails'
+
+# Rake 0.9 breaks Rails 3.1 | http://twitter.com/#!/dhh/status/71966528744071169
+gem "rake", "0.8.7"
 
 
 group(:development, :test) do
 
-  gem 'rspec-rails', '~> 2.0.0.beta.19'
+  gem 'rspec-rails', '>= 2.6.1.beta1'
 
-  # To get a detailed overview about what queries get issued and how long they take
-  # have a look at rails_metrics. Once you bundled it, you can run
-  #
-  #   rails g rails_metrics Metric
-  #   rake db:automigrate
-  #
-  # to generate a model that stores the metrics. You can access them by visiting
-  #
-  #   /rails_metrics
-  #
-  # in your rails application.
-
-  # gem 'rails_metrics', '~> 0.1', :git => 'git://github.com/engineyard/rails_metrics'
-
-  gem 'capybara', '>= 0.3.8'
-  gem 'cucumber', '>= 0.9.3', :git => 'git://github.com/aslakhellesoy/cucumber.git'
-  gem 'cucumber-rails', '>= 0.3.3', :git => 'git://github.com/aslakhellesoy/cucumber-rails.git'
+  gem 'cucumber-rails'
   gem 'pickle'
+
   gem 'timecop'
   gem 'autotest'
   gem 'launchy'
-  gem 'database_cleaner', '>= 0.5.2'
-  gem "factory_girl_rails", ">= 1.0.0"
-  gem 'spork', '0.9.0.rc2'
+  gem 'database_cleaner'
+  gem "factory_girl_rails"
   gem 'timecop'
 
   gem 'prawn'
 
   gem 'email_spec'
+
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-cucumber'
+  gem 'libnotify'
 
   # gem 'silent-postgres'
 end
@@ -59,12 +58,9 @@ end
 gem "escape_utils"
 
 
-gem 'andand'
-gem 'haml-rails', '>= 0.0.2'
 gem 'inherited_resources'
 gem 'simple_form'
 
 gem "nifty-generators"
-gem 'bistro_car'
 
 gem 'mt940_parser', :require => 'mt940'
