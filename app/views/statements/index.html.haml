@@ -1,0 +1,14 @@
+%h2= account.number
+
+%table.statements
+  %thead
+    %tr
+      %th Amount
+      %th Entry date
+      %th Details
+  %tbody
+    - account.statements.each do |s|
+      %tr
+        %td.amount{:class => s.funds_code}= s.amount_with_sign
+        %td.entered_on= s.entered_on
+        %td.details= s.details
