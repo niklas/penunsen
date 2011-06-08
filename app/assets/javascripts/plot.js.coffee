@@ -6,10 +6,8 @@ jQuery(document).ready ->
     statements = jQuery.makeArray $table.find('tbody tr').map ->
       [[
         $(this).data('entered_at')
-        $(this).data('balance')
+        $(this).data('balance') / 100
       ]]
-
-    console.debug(statements)
 
     graph = $.jqplot 'plot', [ statements ],
       axes:
@@ -20,4 +18,7 @@ jQuery(document).ready ->
           tickOptions:
             formatString:'%m-%d'
             textColor: "#fff"
+        yaxis:
+          rendererOptions:
+            forceTickAt0: true
 
