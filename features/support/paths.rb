@@ -11,6 +11,24 @@ module NavigationHelpers
     when /^the home\s?page$/
       '/'
 
+    when /^the statements? page of #{capture_model}$/
+      model = model! $1
+      case model
+      when Account
+        account_statements_path model
+      else
+        raise ArgumentError, "where is the statements page of (#{$1})?"
+      end
+
+    when /^the page of #{capture_model}$/
+      model = model! $1
+      case model
+      when Account
+        account_path model
+      else
+        raise ArgumentError, "where is the page of (#{$1})?"
+      end
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

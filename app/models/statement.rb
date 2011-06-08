@@ -5,6 +5,8 @@ class Statement < ActiveRecord::Base
   FundsCodes = %w(credit debit return_credit return_debit)
   validates_inclusion_of :funds_code, :in => FundsCodes
 
+  validates_presence_of :entered_on
+
   def amount_with_sign
     case funds_code
     when /credit/
