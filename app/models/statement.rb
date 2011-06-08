@@ -19,4 +19,12 @@ class Statement < ActiveRecord::Base
   def entered_at
     entered_on.to_time
   end
+
+  def self.after(date)
+    where('entered_on >= ?', date)
+  end
+
+  def self.before(date)
+    where('entered_on <= ?', date)
+  end
 end
