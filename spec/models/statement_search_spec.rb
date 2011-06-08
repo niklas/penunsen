@@ -36,6 +36,14 @@ describe StatementSearch do
     results.should_not include(bad2)
   end
 
+  it "should accept a base to search on" do
+    base = mock('base')
+    search = StatementSearch.new :base => base
+
+    results = search.results
+    results.should == base
+  end
+
   it "should accept dates as seconds since epoch as string" do
     time = Time.now
     search = StatementSearch.new :after => time.to_i.to_s

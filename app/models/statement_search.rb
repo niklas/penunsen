@@ -9,7 +9,7 @@ class StatementSearch
   def initialize( attrs = {} )
     attrs = {} if attrs.nil? # params[:product_search] may be nil
     attrs = attrs.symbolize_keys
-    attrs.assert_valid_keys( *Attributes )
+    attrs.assert_valid_keys( *(Attributes + [:base]) )
 
     @errors = ActiveModel::Errors.new(self)
 
