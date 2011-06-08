@@ -11,7 +11,7 @@ class StatementsController < InheritedResources::Base
   end
 
   def search
-    @search ||= StatementSearch.new search_params.merge(:base => account.statements)
+    @search ||= StatementSearch.new search_params.merge(:account => account)
   end
 
   def search_params

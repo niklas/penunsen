@@ -44,6 +44,16 @@ describe StatementSearch do
     results.should == base
   end
 
+  it "should take an account to search on" do
+    statements = mock('statements')
+    account    = mock('account')
+    account.should_receive(:statements).and_return(statements)
+    search = StatementSearch.new :account => account
+
+    results = search.results
+    results.should == statements
+  end
+
   it "should accept dates as seconds since epoch as string" do
     time = Time.now
     search = StatementSearch.new :after => time.to_i.to_s

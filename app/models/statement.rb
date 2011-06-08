@@ -22,11 +22,11 @@ class Statement < ActiveRecord::Base
     entered_on.to_time
   end
 
-  def self.after(date)
+  def self.entered_after(date)
     where('entered_on >= ?', date)
   end
 
-  def self.before(date)
+  def self.entered_before(date)
     where('entered_on <= ?', date)
   end
 end

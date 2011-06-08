@@ -36,3 +36,11 @@ When /^I reload the page$/ do
   visit current_path
 end
 
+Transform /^\d{4}-\d{2}-\d{2}$/ do |string|
+  Date.parse(string)
+end
+
+When /^I drag the ("[^"]*") slider to "([^"]*)"$/ do |name, date|
+  When %Q~I fill in #{name} with "#{date.to_time.to_i}"~
+end
+

@@ -1,5 +1,10 @@
 %h2= account.number
 
+= simple_form_for @search, :url => account_statements_path(account), :method => :get do |search|
+  = search.input :before, :required => false
+  = search.input :after, :required => false
+  = search.button :submit
+
 #plot
 
 %table.statements
@@ -10,7 +15,7 @@
       %th Info
   %tbody
     - balance = 0
-    - account.statements.each do |s|
+    - collection.each do |s|
       - balance += s.amount_with_sign
       %tr{:class => dom_id(s), :data => { :balance => balance, :entered_at => s.entered_at.to_s(:db) }}
         %td.amount{:class => s.funds_code}= amount_tag s.amount_with_sign
