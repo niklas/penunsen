@@ -179,6 +179,7 @@ GEM
       json_pure
       rubyzip
     simple_form (1.4.0)
+    spork (0.9.0.rc2)
     sprockets (2.0.0.beta.10)
       hike (~> 1.0)
       rack (~> 1.0)
@@ -229,6 +230,7 @@ DEPENDENCIES
   rspec-rails (>= 2.6.1.beta1)
   sass
   simple_form
+  spork
   sqlite3-ruby
   timecop
   uglifier

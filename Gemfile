@@ -46,6 +46,8 @@ group(:development, :test) do
   gem 'guard-cucumber'
   gem 'libnotify'
 
+  gem 'spork'
+
   # gem 'silent-postgres'
 end
 
