@@ -1,8 +1,9 @@
 %h2= account.number
 
 = simple_form_for @search, :url => account_statements_path(account), :method => :get do |search|
-  = search.input :before, :required => false
+  .before-after{:data => @search.slider_options }
   = search.input :after, :required => false
+  = search.input :before, :required => false
   = search.button :submit
 
 #plot

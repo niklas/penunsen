@@ -11,10 +11,17 @@ class StatementsController < InheritedResources::Base
   end
 
   def search
-    @search ||= StatementSearch.new search_params.merge(:account => account)
+    @search ||= StatementSearch.new search_params.merge(:account => account).reverse_merge(search_defaults)
   end
 
   def search_params
     params[:statement_search] || {}
+  end
+
+  def search_defaults
+    {
+      :before => Date.today,
+      :after => 1.month.ago.to_date
+    }
   end
 end

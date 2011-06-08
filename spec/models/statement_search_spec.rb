@@ -36,6 +36,19 @@ describe StatementSearch do
     results.should_not include(bad2)
   end
 
+  it "should provide min and max entered_on boundaries" do
+    time = Date.today
+    time1 = time - 10.days
+    time2 = time + 10.days
+    first = Factory :statement, :entered_on => time1
+    last  = Factory :statement, :entered_on => time2
+
+    search = StatementSearch.new
+
+    search.first_statement.should == first
+    search.last_statement.should == last
+  end
+
   it "should accept a base to search on" do
     base = mock('base')
     search = StatementSearch.new :base => base
@@ -54,14 +67,9 @@ describe StatementSearch do
     results.should == statements
   end
 
-  it "should accept dates as seconds since epoch as string" do
+  it "should accept dates as %F string (JS)" do
     time = Time.now
-    search = StatementSearch.new :after => time.to_i.to_s
-    search.after.should == time.to_date
-  end
-  it "should accept dates as seconds since epoch as integer" do
-    time = Time.now
-    search = StatementSearch.new :after => time.to_i
-    search.after.should == time.to_date
+    search = StatementSearch.new :after => time.strftime('%F')
+    search.after_date.should == time.to_date
   end
 end

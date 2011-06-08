@@ -5,7 +5,11 @@
 // the compiled file.
 //
 //= require jquery
+//= require jquery-ui
 //= require jquery_ujs
+//= require jquery.mousewheel
+//= require jQRangeSlider
+//= require jQDateRangeSlider
 //= require jquery.jqplot
 //= require jqplot.dateAxisRenderer
 //= require_tree .
