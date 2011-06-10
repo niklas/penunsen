@@ -8,3 +8,4 @@ tmp/**/*
 capybara-*.html
 public/stylesheets/application.css
 .sass-cache
+rerun.txt
