@@ -1,4 +1,6 @@
 class StatementsController < InheritedResources::Base
+  respond_to :html, :js
+
   belongs_to :account
 
   def account

@@ -33,6 +33,9 @@ jQuery(document).ready ->
       $after.val format_date(ui.values.max)
       $before.val format_date(ui.values.min)
 
+    $slider.bind 'valuesChanged', (event, ui) ->
+      $form.trigger('modified')
+
     #$slider.slider
     #  range: true
     #  min: $slider.data('min')
