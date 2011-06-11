@@ -44,6 +44,7 @@ group(:development, :test) do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-cucumber'
+  gem 'guard-spork'
   gem 'libnotify'
 
   gem 'spork'
