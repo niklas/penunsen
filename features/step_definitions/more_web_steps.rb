@@ -41,6 +41,6 @@ Transform /^\d{4}-\d{2}-\d{2}$/ do |string|
 end
 
 When /^I drag the ("[^"]*") slider to "([^"]*)"$/ do |name, date|
-  When %Q~I fill in #{name} with "#{date.to_time.to_i}"~
+  When %Q~I fill in #{name} with "#{date.strftime('%F')}"~
 end
 
