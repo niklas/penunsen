@@ -6,6 +6,7 @@ parsed = MT940.parse IO.read(source)
 
 account = statement = nil
 Account.transaction do
+  prepared = Hash.new {|h,k| h[k] = []}
   parsed.each do |array|
     array.each do |e|
       case e
@@ -13,13 +14,14 @@ Account.transaction do
         account   = BankAccount.find_or_create_by_number_and_bank_code(e.account_number, e.bank_code)
         statement = nil
       when MT940::StatementLine
-        statement = account.statements.create!(
+        statement = {
           :entered_on => e.entry_date, 
           :amount => e.amount, 
           :funds_code => e.funds_code
-        )
+        }
+        prepared[account] << statement
       when MT940::StatementLineInformation
-        statement.update_attributes!({
+        statement.merge!({
           :account_holder => e.account_holder,
           :account_number => e.account_number,
           :bank_code      => e.bank_code,
@@ -29,12 +31,16 @@ Account.transaction do
         })
       when MT940::AccountBalance
         if statement
-          statement.update_attributes!({
+          statement.merge!({
             :balance_sign   => e.sign,
             :balance_amount => e.amount
           })
         end
       end
     end
+  end
+
+  prepared.each do |account, statements|
+    account.import statements
   end
 end

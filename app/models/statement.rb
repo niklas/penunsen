@@ -19,6 +19,10 @@ class Statement < ActiveRecord::Base
     end
   end
 
+  def funds_code=(new_funds_code)
+    write_attribute :funds_code, new_funds_code.to_s
+  end
+
   def entered_at
     read_attribute(:entered_at) || entered_on.to_time.utc
   end
