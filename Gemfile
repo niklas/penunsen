@@ -67,3 +67,5 @@ gem 'simple_form'
 gem "nifty-generators"
 
 gem 'mt940_parser', :require => 'mt940'
+
+gem 'minimal', :git => 'git://github.com/svenfuchs/minimal.git'
