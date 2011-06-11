@@ -50,6 +50,7 @@ group(:development, :test) do
   gem 'spork'
 
   # gem 'silent-postgres'
+  gem 'pry'
 end
 
 group :development do

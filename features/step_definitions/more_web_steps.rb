@@ -40,6 +40,10 @@ Transform /^\d{4}-\d{2}-\d{2}$/ do |string|
   Date.parse(string)
 end
 
+Transform /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/ do |string|
+  Time.zone.parse(string)
+end
+
 When /^I drag the ("[^"]*") slider to "([^"]*)"$/ do |name, date|
   When %Q~I fill in #{name} with "#{date.strftime('%F')}"~
 end

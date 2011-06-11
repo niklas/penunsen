@@ -20,7 +20,7 @@ class Statement < ActiveRecord::Base
   end
 
   def entered_at
-    entered_on.to_time
+    read_attribute(:entered_at) || entered_on.to_time.utc
   end
 
   def self.entered_after(date)
