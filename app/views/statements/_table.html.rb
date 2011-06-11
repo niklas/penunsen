@@ -15,7 +15,7 @@ module Statements
           statements.each do |s|
             balance += s.amount_with_sign
             tr :class => dom_id(s), :data => { :balance => balance, :entered_at => s.entered_at.to_s(:db)} do
-              td amount_tag(s.amount_with_sign), :class => "amount #{s.funds_code}"
+              td amount(s), :class => "amount #{s.funds_code}"
               td s.entered_on, :class => 'entered_on'
               if s.account_holder.present?
                 td s.account_holder, :class => 'name'
@@ -55,6 +55,10 @@ module Statements
       end
 
       start
+    end
+
+    def amount(statement)
+      number_to_currency  0.01 * statement.amount_with_sign
     end
 
     def start_at
