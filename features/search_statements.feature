@@ -5,6 +5,7 @@ Feature: Search for statements
 
   Background:
     Given a bank account exists
+      And now is "2010-12-06"
       And the following statements exist:
         | account          | account_holder  | entered_on |
         | the bank account | Mom             | 2010-12-01 |
