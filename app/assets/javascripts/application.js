@@ -4,13 +4,7 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require jquery
-//= require jquery-ui
-//= require jquery_ujs
-//= require jquery.mousewheel
-//= require jQRangeSlider
-//= require jQDateRangeSlider
-//= require jquery.jqplot
-//= require jqplot.dateAxisRenderer
-//= require_tree .
+//= require search
+//= require plot
+//= require date-slider
 
