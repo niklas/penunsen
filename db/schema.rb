@@ -10,14 +10,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110607154044) do
+ActiveRecord::Schema.define(:version => 20110611164814) do
 
   create_table "accounts", :force => true do |t|
-    t.string   "number",     :limit => 23
-    t.string   "bank_code",  :limit => 8
-    t.string   "type",       :limit => 64
+    t.string   "number",             :limit => 23
+    t.string   "bank_code",          :limit => 8
+    t.string   "type",               :limit => 64
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "start_balance"
+    t.string   "start_balance_sign", :limit => 16
   end
 
   create_table "statements", :force => true do |t|
