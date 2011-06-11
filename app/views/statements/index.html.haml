@@ -1,4 +1,4 @@
-%h2= account.number
+%h2.title= account.number
 
 = simple_form_for @search, :url => account_statements_path(account), :method => :get do |search|
   .before-after{:data => @search.slider_options }

@@ -1,2 +1,3 @@
-$('#table').html("<%=j render('table', :statements => collection) %>");
+$('#table').html("<%=j render('table', :statements => collection) %>")
+           .trigger('updated');
 

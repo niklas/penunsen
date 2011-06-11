@@ -6,5 +6,6 @@
 //= require ./jquery.mousewheel
 //= require ./jQRangeSlider
 //= require ./jQDateRangeSlider
-//= require ./jquery.jqplot
-//= require ./jqplot.dateAxisRenderer
+//= require ./jquery.colorhelpers
+//= require ./jquery.flot
+//= require ./jquery.flot.threshold

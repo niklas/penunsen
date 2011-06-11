@@ -1,24 +1,37 @@
 jQuery(document).ready ->
-  $table = $('table.statements')
-  $.jqplot.config.enablePlugins = true
+  $('#plot').each ->
+    $plot = $(this)
 
-  if $table.length > 0
-    statements = jQuery.makeArray $table.find('tbody tr').map ->
-      [[
-        $(this).data('entered_at')
-        $(this).data('balance') / 100
-      ]]
+    $source = $('#table')
 
-    graph = $.jqplot 'plot', [ statements ],
-      axes:
+    table = ->
+      $source.find('table.statements')
+
+    if table().length == 0
+      alert("no table with statements found")
+
+    parsedBalances = ->
+      $.makeArray table().find('tr[data-balance][data-entered-at]').map ->
+        [[
+          new Date( $(this).data('entered-at') )
+          $(this).data('balance') / 100
+        ]]
+
+    plot = null
+
+    plotAll = ->
+      plot = $.plot $plot,
+        [
+          data: parsedBalances()
+          points:
+            show: 'yes'
+          lines:
+            show: 'yes'
+        ],
         xaxis:
-          renderer:$.jqplot.DateAxisRenderer
-          rendererOptions:
-            tickRenderer: $.jqplot.CanvasAxisTickRenderer
-          tickOptions:
-            formatString:'%m-%d'
-            textColor: "#fff"
-        yaxis:
-          rendererOptions:
-            forceTickAt0: true
+          mode: 'time'
+          timeformat: '%y-%0m-%0d'
 
+    $source.bind 'updated', plotAll
+
+    plotAll()
