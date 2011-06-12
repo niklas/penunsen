@@ -27,7 +27,7 @@ Then /^I should see message "([^"]*)"$/ do |message|
 end
 
 Then /^I should see the following table:$/ do |expected|
-  actual = table(tableish("table tr", 'th,td'))
+  actual = table(tableish("table thead tr, table tbody tr", 'th,td'))
   expected.diff! actual
 end
 

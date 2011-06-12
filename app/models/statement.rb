@@ -42,8 +42,13 @@ class Statement < ActiveRecord::Base
     when 'debit'
       -balance_amount
     else
-      raise("do not know how to handle balance_sign #{balance_sign}")
+      raise("do not know how to handle balance_sign '#{balance_sign}'")
     end
+  end
+
+  def balance_amount_with_sign=(ba)
+    self.balance_amount = ba.abs
+    self.balance_sign = ba < 0 ? 'debit' : 'credit' 
   end
 
   # this will call .all and so must be the last item in query chain

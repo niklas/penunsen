@@ -5,7 +5,7 @@ Then /^I should see the following statement data:$/ do |expected|
     fields.map { |field| row.attributes[field] }
   end
 
-  found = tableish("table.statements tr#{having}", selector)
+  found = tableish("table.statements tr#{having}", selector).reverse
   found.unshift expected.column_names
   expected.diff! table(found)
 end
