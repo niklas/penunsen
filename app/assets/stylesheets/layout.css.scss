@@ -1,4 +1,4 @@
-$list-width: 60%;
+$list-width: 42%;
 $other-width: 100% - $list-width;
 
 div#plot, form.statement_search {
@@ -14,6 +14,7 @@ form.statement_search {
 }
 
 #plot {
+  height: 400px;
   bottom: 0;
   z-index: 1;
 }
