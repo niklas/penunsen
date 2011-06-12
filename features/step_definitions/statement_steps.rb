@@ -25,7 +25,8 @@ end
 Then /^#{capture_model} should have exactly the following statements:$/ do |m, expected|
   account = model! m
   found = account.statements.map {|r| r.attributes.slice(*expected.column_names) }
-  expected.map_column!('entered_at') { |s| Time.parse(s).utc }
-  expected.map_column!('entered_on') { |s| Time.parse(s).to_date }
+  expected.map_column!('entered_at') { |s| Time.parse(s).utc } if expected.column_names.include?('entered_at')
+  expected.map_column!('entered_on') { |s| Time.parse(s).to_date } if expected.column_names.include?('entered_on')
+  expected.map_column!('balance_amount') { |s| s.to_i } if expected.column_names.include?('balance_amount')
   expected.diff! table( found )
 end
