@@ -1,7 +1,6 @@
 module Statements
   class Table < Minimal::Template
     def to_html
-      calculate_balances
       table :class => 'statements' do
         thead do
           tr do
@@ -26,7 +25,7 @@ module Statements
         end
 
         tfoot do
-          tr :data => {:balance => earliest_balance, :entered_at => (minimum - 1.day).to_s(:db)}  do
+          tr :data => {:balance => earliest_balance, :entered_at => minimum.to_s(:db)}  do
             td amount(earliest_balance)
           end
           tr
@@ -43,33 +42,11 @@ module Statements
 
     # tries to find the balance where the given statements started
     def earliest_balance
-      return @earliest_balance if defined?(@earliest_balance)
-      to_rewind = []
-      found = nil
-
-      # find the first recorded balance_amount
-      chronic.each do |s|
-        to_rewind << s
-        if s.balance_amount.present?
-          found = s.balance_amount_with_sign
-          break
-        end
-      end
-
-      unless found.nil?
-        # rewind back
-        to_rewind.each do |s|
-          found -= s.amount_with_sign
-        end
+      if earliest.present?
+        earliest.balance_amount_with_sign - earliest.amount_with_sign
       else
-        if account.start_balance.present?
-          found = account.start_balance_with_sign
-        else
-          raise("no statement with a #balance_amount found and the account has no #start_balance")
-        end
+        account.start_balance_with_sign
       end
-
-      @earliest_balance = found
     end
 
     def amount(record_or_amount)
@@ -87,21 +64,6 @@ module Statements
 
     def earliest
       @earliest ||= chronic.first
-    end
-
-    private
-    def calculate_balances
-      return if @balances_calculated
-      balance = earliest_balance
-      chronic.each do |s|
-        balance += s.amount_with_sign
-        if s.balance_amount.present?
-          raise "conflict, please catch this stuff with validations" if s.balance_amount_with_sign != balance
-        else
-          s.balance_amount_with_sign = balance
-        end
-      end
-      @balances_calculated = true
     end
 
   end
