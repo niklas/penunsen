@@ -38,33 +38,25 @@ Feature: Import Statements
        | Lottery | 1100           | credit       |
     
 
-  @wip
-  Scenario: big hole at the end
-    Given the following statements exist:
-        | account          | amount | funds_code | balance_amount | balance_sign |
-        | the bank account | 100    | credit     | 200            | credit       |
-        | the bank account | 50     | debit      | 150            | credit       |
-        | the bank account | 30     | debit      |                |              |
-        | the bank account | 20     | credit     |                |              |
-     When I go to the statements page of the bank_account
-     Then I should see the following statement data:
-        | balance |
-        | 100     |
-        | 200     |
-        | 150     |
-        | 120     |
-        | 140     |
+ Scenario: guesses account's start balance from first statement with a balance
+    Given a bank account exists with start_balance: nil, start_balance_sign: nil
+     When I import the following statements into the bank account:
+       | details       | amount | funds_code | balance_amount | balance_sign |
+       | 0th Birthday  | 1000   | credit     |                |              |
+       | 1rst Birthday | 2000   | credit     | 2500           | credit       |
+     Then the bank account should have exactly the following statements:
+       | details       | balance_amount | balance_sign |
+       | 1rst Birthday | 2500           | credit       |
+       | 0th Birthday  | 500            | credit       |
+      And the bank_account's start_balance_with_sign should be -500
 
-  @wip
-  Scenario: hole at the beginning
-    Given the following statements exist:
-        | account          | amount | funds_code | balance_amount | balance_sign |
-        | the bank account |  50    | credit     |                |              |
-        | the bank account | 100    | credit     | 200            | credit       |
-     When I go to the statements page of the bank_account
-     Then I should see the following statement data:
-        | balance |
-        | 50      |
-        | 100     |
-        | 200     |
+  Scenario: guesses account's start balance from amount of first entry if no balances in statements
+    Given a bank account exists with start_balance: nil, start_balance_sign: nil
+     When I import the following statements into the bank account:
+       | details      | amount | funds_code |
+       | 0th Birthday | 1000   | credit     |
+     Then the bank account should have exactly the following statements:
+       | details      | balance_amount | balance_sign |
+       | 0th Birthday | 1000           | credit       |
+      And the bank_account's start_balance_with_sign should be 0
 
