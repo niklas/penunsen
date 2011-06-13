@@ -9,6 +9,7 @@ class Statement < ActiveRecord::Base
   scope :default_order, except(:order).order('entered_on DESC')
   scope :chronologically, order('entered_on ASC, entered_at ASC, id ASC')
   scope :fake, where(:fake => true)
+  scope :real, where(:fake => nil)
 
   separately_signed :amount, :positive => /credit/, :negative => /debit/, :amount => :amount, :sign => :funds_code
   separately_signed :balance
@@ -86,7 +87,7 @@ class Statement < ActiveRecord::Base
   end
 
   def duplicate_exists?
-    others.where(:entered_on => entered_on).all.any? do |other|
+    others.real.where(:entered_on => entered_on).all.any? do |other|
       distance_to(other) < 10.0
     end
   end
