@@ -18,6 +18,10 @@ class Account < ActiveRecord::Base
 
         remove_duplicates!
 
+        if first.present? && last.present?
+          existing_in_timespan.fake.each(&:destroy)
+        end
+        
         fix_fakes_after!
 
         fix_balance_before!
@@ -104,6 +108,12 @@ class Account < ActiveRecord::Base
     # the stement directly after this import
     def nexxt
       account.statements.except(:order).chronologically.entered_after( last.entered_at ).first
+    end
+
+    def existing_in_timespan
+      account.statements.except(:order).chronologically.
+        entered_after( first.entered_at ).
+        entered_before( last.entered_at )
     end
 
     # returns the balance the account currently has
