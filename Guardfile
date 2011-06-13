@@ -32,5 +32,5 @@ guard 'cucumber', :cli => '--drb --format pretty --no-profile --tags ~@wip', :ch
   watch(%r{^features/support/.+$})          { 'features' }
   watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
 
-  watch(%r{^app/models/(account|statement).*\.rb$})   { |m| 'features/import_statements.feature' }
+  watch(%r{^app/models/(account|statement)})   { |m| 'features/import_statements.feature' }
 end
