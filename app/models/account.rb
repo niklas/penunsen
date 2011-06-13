@@ -95,7 +95,12 @@ class Account < ActiveRecord::Base
 
     # the statement directly before this import
     def previous
-      account.statements.chronologically.entered_before( first.entered_at ).last
+      account.statements.except(:order).chronologically.entered_before( first.entered_at ).last
+    end
+
+    # the stement directly after this import
+    def nexxt
+      account.statements.except(:order).chronologically.entered_after( last.entered_at ).first
     end
 
     # returns the balance the account currently has
@@ -109,16 +114,18 @@ class Account < ActiveRecord::Base
     def fix_balance_before!
       if start_balance.present?
         if start_balance != actual_balance
+          diff = start_balance - actual_balance
           if previous.present?
             if previous.fake?
-              diff = start_balance - actual_balance
-              binding.pry if (previous.amount_with_sign - diff) == 1000
-              previos.update_attributes! fake_before_attributes(
-                :amount_with_sign => previous.amount_with_sign - diff,
+              previous.update_attributes! fake_before_attributes(
+                :amount_with_sign         => previous.amount_with_sign - diff,
                 :balance_amount_with_sign => previous.balance_amount_with_sign - diff
               )
             else
-              raise "previous non-fake present, must do more magic"
+              account.statements.create! fake_before_attributes(
+                :amount_with_sign         => diff,
+                :balance_amount_with_sign => previous.balance_amount_with_sign + diff
+              )
             end
           else
             account.statements.create! fake_before_attributes(
@@ -131,18 +138,25 @@ class Account < ActiveRecord::Base
 
     def fix_fakes_after!
       if end_balance.present?
-        if next_fake = account.statements.chronologically.fake.entered_after( last.entered_at ).first
-
-          # does it fit seamlessly, move it before the import
-          if next_fake.balance_amount_with_sign == end_balance
-            next_fake.update_attributes! fake_before_attributes({
-              :amount_with_sign         => next_fake.amount_with_sign - balance_delta,
-              :balance_amount_with_sign => next_fake.balance_amount_with_sign - balance_delta,
-            })
+        if nexxt.present?
+          if nexxt.fake?
+            # does it fit seamlessly, remove it
+            if nexxt.balance_amount_with_sign == end_balance
+              nexxt.destroy
+            else
+              nexxt.update_attributes!({
+                :amount_with_sign         => nexxt.balance_amount_with_sign - end_balance
+              })
+            end
           else
-            next_fake.update_attributes!({
-              :amount_with_sign         => next_fake.amount_with_sign - end_balance
-            })
+            # if it doesn't fit seemless
+            if nexxt.start_balance != end_balance
+              diff = nexxt.start_balance - end_balance
+              account.statements.create! fake_after_attributes(
+                :amount_with_sign         => diff,
+                :balance_amount_with_sign => end_balance + diff
+              )
+            end
           end
         end
       end
@@ -154,6 +168,15 @@ class Account < ActiveRecord::Base
         :details => 'Fake',
         :entered_on => first.entered_on.yesterday,
         :entered_at => first.entered_on.to_time.utc - 5.minutes
+      }.merge(more)
+    end
+
+    def fake_after_attributes(more={})
+      {
+        :fake => true,
+        :details => 'Fake',
+        :entered_on => last.entered_on.tomorrow,
+        :entered_at => last.entered_on.to_time.utc + 1.day + 5.minutes
       }.merge(more)
     end
 

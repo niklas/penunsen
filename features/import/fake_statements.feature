@@ -79,3 +79,22 @@ Feature: Import manages fake statements
        | Fake    | 200    | credit     | 1200           | credit       | 2011-05-31 | true |
        | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |      |
        | Fake    | 300    | credit     | 300            | credit       | 2011-04-30 | true |
+
+  Scenario: splits fake statement when importing with gaps into an existing fake statement
+    Given I imported the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |
+      And I imported the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |
+     When I import the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | Present | 70     | debit      | 900            | credit       | 2011-05-05 |
+     Then the bank account should have exactly the following statements:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on | fake |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
+       | Fake    | 300    | credit     | 1200           | credit       | 2011-05-31 | true |
+       | Present | 70     | debit      | 900            | credit       | 2011-05-05 |      |
+       | Fake    | 30     | debit      | 970            | credit       | 2011-05-04 | true |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |      |
+       | Fake    | 300    | credit     | 300            | credit       | 2011-04-30 | true |

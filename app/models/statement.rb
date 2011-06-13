@@ -7,7 +7,7 @@ class Statement < ActiveRecord::Base
   validates_presence_of :entered_on
 
   scope :default_order, except(:order).order('entered_on DESC')
-  scope :chronologically, except(:order).order('entered_on ASC, entered_at ASC, id ASC')
+  scope :chronologically, order('entered_on ASC, entered_at ASC, id ASC')
   scope :fake, where(:fake => true)
 
   separately_signed :amount, :positive => /credit/, :negative => /debit/, :amount => :amount, :sign => :funds_code
@@ -75,6 +75,10 @@ class Statement < ActiveRecord::Base
     else
       0
     end + amount_with_sign
+  end
+
+  def start_balance
+    balance_amount_with_sign - amount_with_sign
   end
 
   def to_s
