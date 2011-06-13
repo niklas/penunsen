@@ -26,7 +26,20 @@ Feature: Import manages fake statements
        | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
        | Fake    | 1200   | credit     | 1200           | credit       | 2011-05-31 | true |
 
-  Scenario: updates fake statement when importing seemless inverse chronologically
+  Scenario: updates fake statement when importing seemless chronologically
+    Given I imported the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | first   | 700    | credit     | 1200           | credit       | 2011-05-01 |
+     When I import the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |
+     Then the bank account should have exactly the following statements:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on | fake |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
+       | first   | 700    | credit     | 1200           | credit       | 2011-05-01 |      |
+       | Fake    | 500    | credit     | 500            | credit       | 2011-04-30 | true |
+
+  Scenario: updates fake statement when importing seemless anti-chronologically
     Given I imported the following statements into the bank account:
        | details | amount | funds_code | balance_amount | balance_sign | entered_on |
        | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |
@@ -38,3 +51,31 @@ Feature: Import manages fake statements
        | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
        | first   | 700    | credit     | 1200           | credit       | 2011-05-01 |      |
        | Fake    | 500    | credit     | 500            | credit       | 2011-04-30 | true |
+
+  Scenario: splits fake statement when importing with gaps chronologically
+    Given I imported the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |
+     When I import the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |
+     Then the bank account should have exactly the following statements:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on | fake |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
+       | Fake    | 200    | credit     | 1200           | credit       | 2011-05-31 | true |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |      |
+       | Fake    | 300    | credit     | 300            | credit       | 2011-04-30 | true |
+
+  Scenario: splits fake statement when importing with gaps anti-chronologically
+    Given I imported the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |
+     When I import the following statements into the bank account:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |
+     Then the bank account should have exactly the following statements:
+       | details | amount | funds_code | balance_amount | balance_sign | entered_on | fake |
+       | second  | 800    | credit     | 2000           | credit       | 2011-06-01 |      |
+       | Fake    | 200    | credit     | 1200           | credit       | 2011-05-31 | true |
+       | first   | 700    | credit     | 1000           | credit       | 2011-05-01 |      |
+       | Fake    | 300    | credit     | 300            | credit       | 2011-04-30 | true |

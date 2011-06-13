@@ -95,7 +95,7 @@ class Account < ActiveRecord::Base
 
     # the statement directly before this import
     def previous
-      @previous ||= account.statements.chronologically.entered_before( first.entered_at ).last
+      account.statements.chronologically.entered_before( first.entered_at ).last
     end
 
     # returns the balance the account currently has
@@ -110,15 +110,20 @@ class Account < ActiveRecord::Base
       if start_balance.present?
         if start_balance != actual_balance
           if previous.present?
-            raise "previous present, must correct it or do more magic"
+            if previous.fake?
+              diff = start_balance - actual_balance
+              binding.pry if (previous.amount_with_sign - diff) == 1000
+              previos.update_attributes! fake_before_attributes(
+                :amount_with_sign => previous.amount_with_sign - diff,
+                :balance_amount_with_sign => previous.balance_amount_with_sign - diff
+              )
+            else
+              raise "previous non-fake present, must do more magic"
+            end
           else
-            account.statements.create!({
-              :amount_with_sign => start_balance - actual_balance,
-              :fake => true,
-              :details => 'Fake',
-              :entered_on => first.entered_on.yesterday,
-              :entered_at => first.entered_on.to_time.utc - 5.minutes
-            })
+            account.statements.create! fake_before_attributes(
+              :amount_with_sign => start_balance - actual_balance
+            )
           end
         end
       end
@@ -127,18 +132,29 @@ class Account < ActiveRecord::Base
     def fix_fakes_after!
       if end_balance.present?
         if next_fake = account.statements.chronologically.fake.entered_after( last.entered_at ).first
+
+          # does it fit seamlessly, move it before the import
           if next_fake.balance_amount_with_sign == end_balance
-            next_fake.update_attributes!({
+            next_fake.update_attributes! fake_before_attributes({
               :amount_with_sign         => next_fake.amount_with_sign - balance_delta,
               :balance_amount_with_sign => next_fake.balance_amount_with_sign - balance_delta,
-              :entered_on => first.entered_on.yesterday,
-              :entered_at => first.entered_on.to_time.utc - 5.minutes
             })
           else
-            raise "fake must be split"
+            next_fake.update_attributes!({
+              :amount_with_sign         => next_fake.amount_with_sign - end_balance
+            })
           end
         end
       end
+    end
+
+    def fake_before_attributes(more={})
+      {
+        :fake => true,
+        :details => 'Fake',
+        :entered_on => first.entered_on.yesterday,
+        :entered_at => first.entered_on.to_time.utc - 5.minutes
+      }.merge(more)
     end
 
     # the sum of changes this import will introduce
