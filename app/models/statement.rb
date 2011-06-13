@@ -7,8 +7,12 @@ class Statement < ActiveRecord::Base
   validates_presence_of :entered_on
 
   scope :default_order, except(:order).order('entered_on DESC')
+  scope :chronologically, except(:order).order('entered_on ASC, entered_at ASC, id ASC')
+  scope :fake, where(:fake => true)
 
   separately_signed :amount, :positive => /credit/, :negative => /debit/, :amount => :amount, :sign => :funds_code
+  separately_signed :balance
+
 
   def funds_code=(new_funds_code)
     write_attribute :funds_code, new_funds_code.to_s
@@ -39,9 +43,6 @@ class Statement < ActiveRecord::Base
       raise ArgumentError, "#{date_or_time} is neither Date nor Time"
     end
   end
-
-
-  separately_signed :balance
 
   # this will call .all and so must be the last item in query chain
   def self.with_balance(start=nil)

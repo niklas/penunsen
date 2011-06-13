@@ -10,7 +10,7 @@ Then /^I should see the following statement data:$/ do |expected|
   expected.diff! table(found)
 end
 
-When /^I import the following statements into #{capture_model}:$/ do |m, table|
+When /^I import(?:ed)? the following statements into #{capture_model}:$/ do |m, table|
   account = model! m
   account.import table.hashes.map {|a| Factory.attributes_for(:statement, a)}
 end

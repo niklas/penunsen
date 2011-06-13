@@ -15,6 +15,8 @@ class Account < ActiveRecord::Base
       account.transaction do
         prepare!
 
+        fix_fakes_after!
+
         fix_balance_before!
 
         distribute_over_day!
@@ -66,9 +68,34 @@ class Account < ActiveRecord::Base
       @start_balance = found
     end
 
+    # returns the balance this imports ends at
+    def end_balance
+      return @end_balance if defined?(@end_balance)
+      to_rewind = []
+      found = nil
+
+      # find the last recorded balance_amount
+      prepared.reverse.each do |s|
+        if s.balance_amount.present?
+          found = s.balance_amount_with_sign
+          break
+        end
+        to_rewind << s
+      end
+
+      if found.present?
+        # rewind forward
+        to_rewind.each do |s|
+          found += s.amount_with_sign
+        end
+      end
+
+      @end_balance = found
+    end
+
     # the statement directly before this import
     def previous
-      @previous ||= account.statements.entered_before( first.entered_at ).last
+      @previous ||= account.statements.chronologically.entered_before( first.entered_at ).last
     end
 
     # returns the balance the account currently has
@@ -97,8 +124,34 @@ class Account < ActiveRecord::Base
       end
     end
 
+    def fix_fakes_after!
+      if end_balance.present?
+        if next_fake = account.statements.chronologically.fake.entered_after( last.entered_at ).first
+          if next_fake.balance_amount_with_sign == end_balance
+            next_fake.update_attributes!({
+              :amount_with_sign         => next_fake.amount_with_sign - balance_delta,
+              :balance_amount_with_sign => next_fake.balance_amount_with_sign - balance_delta,
+              :entered_on => first.entered_on.yesterday,
+              :entered_at => first.entered_on.to_time.utc - 5.minutes
+            })
+          else
+            raise "fake must be split"
+          end
+        end
+      end
+    end
+
+    # the sum of changes this import will introduce
+    def balance_delta
+      prepared.map(&:amount_with_sign).reduce(:+)
+    end
+
     def first
       prepared.first
+    end
+
+    def last
+      prepared.last
     end
 
     def save!
