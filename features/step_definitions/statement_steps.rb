@@ -27,6 +27,9 @@ Then /^#{capture_model} should have exactly the following statements:$/ do |m, e
   found = account.statements.map {|r| r.attributes.slice(*expected.column_names) }
   expected.map_column!('entered_at') { |s| Time.parse(s).utc } if expected.column_names.include?('entered_at')
   expected.map_column!('entered_on') { |s| Time.parse(s).to_date } if expected.column_names.include?('entered_on')
-  expected.map_column!('balance_amount') { |s| s.to_i } if expected.column_names.include?('balance_amount')
+  %w(balance_amount amount).each do |amount_column|
+    expected.map_column!(amount_column) { |s| s.to_i } if expected.column_names.include?(amount_column)
+  end
+  expected.map_column!('fake') { |b| b.to_s == 'true' || nil } if expected.column_names.include?('fake')
   expected.diff! table( found )
 end

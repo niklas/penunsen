@@ -15,6 +15,8 @@ class Account < ActiveRecord::Base
       account.transaction do
         prepare!
 
+        fix_balance_before!
+
         distribute_over_day!
 
         save!
@@ -39,6 +41,7 @@ class Account < ActiveRecord::Base
       end
     end
 
+    # returns the balance this import starts from
     def start_balance
       return @start_balance if defined?(@start_balance)
       to_rewind = []
@@ -63,9 +66,43 @@ class Account < ActiveRecord::Base
       @start_balance = found
     end
 
+    # the statement directly before this import
+    def previous
+      @previous ||= account.statements.entered_before( first.entered_at ).last
+    end
+
+    # returns the balance the account currently has
+    def actual_balance
+      if previous.present?
+        previous.balance_amount_with_sign
+      else
+        0
+      end
+    end
+    def fix_balance_before!
+      if start_balance.present?
+        if start_balance != actual_balance
+          if previous.present?
+            raise "previous present, must correct it or do more magic"
+          else
+            account.statements.create!({
+              :amount_with_sign => start_balance - actual_balance,
+              :fake => true,
+              :details => 'Fake',
+              :entered_on => first.entered_on.yesterday,
+              :entered_at => first.entered_on.to_time.utc - 5.minutes
+            })
+          end
+        end
+      end
+    end
+
+    def first
+      prepared.first
+    end
+
     def save!
       prepared.each(&:save!)
-      account.save!
     end
   end
 

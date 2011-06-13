@@ -11,6 +11,8 @@ module SeparatelySigned
       opts.reverse_merge!({
         :positive => 'credit',
         :negative => 'debit',
+        :positive_value => 'credit',
+        :negative_value => 'debit',
         # sources
         :amount   => :"#{name}_amount",
         :sign     => :"#{name}_sign"
@@ -37,7 +39,7 @@ module SeparatelySigned
 
       define_method :"#{amount}_with_sign=" do |g|
         send set_amount, g.abs
-        send set_sign, g < 0 ? opts[:negative].to_s : opts[:positive].to_s
+        send set_sign, g < 0 ? opts[:negative_value] : opts[:positive_value]
       end
     end
   end

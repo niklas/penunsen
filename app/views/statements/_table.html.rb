@@ -24,13 +24,6 @@ module Statements
           end
         end
 
-        tfoot do
-          tr :data => {:balance => earliest_balance, :entered_at => minimum.to_s(:db)}  do
-            td amount(earliest_balance)
-          end
-          tr
-          tr
-        end
       end
     end
 

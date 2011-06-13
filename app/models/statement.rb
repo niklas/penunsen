@@ -8,16 +8,7 @@ class Statement < ActiveRecord::Base
 
   scope :default_order, except(:order).order('entered_on DESC')
 
-  def amount_with_sign
-    case funds_code
-    when /credit/
-      amount
-    when /debit/
-      -amount
-    else
-      raise("do not know how to handle funds_code #{funds_code}")
-    end
-  end
+  separately_signed :amount, :positive => /credit/, :negative => /debit/, :amount => :amount, :sign => :funds_code
 
   def funds_code=(new_funds_code)
     write_attribute :funds_code, new_funds_code.to_s

@@ -23,8 +23,8 @@ Feature: Import Statements
   Scenario: Fills in resulting balance for every statement
     Given a bank account exists
       And the following statements exist:
-        | details | amount | funds_code | balance_amount | balance_sign | fake |
-        | Fake    | 100    | credit     | 100            | credit       | true |
+        | account          | details | amount | funds_code | balance_amount | balance_sign | fake |
+        | the bank account | Fake    | 100    | credit     | 100            | credit       | true |
      When I import the following statements into the bank account:
        | details | amount | funds_code |
        | Lottery | 1000   | credit     |
@@ -39,9 +39,10 @@ Feature: Import Statements
        | Donate  | 410            | credit       |
        | Taxes   | 910            | credit       |
        | Lottery | 1100           | credit       |
+       | Fake    | 100            | credit       |
     
 
- Scenario: guesses account's start balance from first statement with a balance
+ Scenario: guesses account's fake start balance from first statement with a balance
     Given a bank account exists
      When I import the following statements into the bank account:
        | details       | amount | funds_code | balance_amount | balance_sign |
