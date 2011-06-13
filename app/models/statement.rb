@@ -81,7 +81,7 @@ class Statement < ActiveRecord::Base
     if previous = account.statements.entered_before( entered_at ).first
       previous.balance_amount_with_sign
     else
-      account.start_balance_with_sign || 0
+      0
     end + amount_with_sign
   end
 

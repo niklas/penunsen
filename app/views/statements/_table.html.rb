@@ -45,7 +45,7 @@ module Statements
       if earliest.present?
         earliest.balance_amount_with_sign - earliest.amount_with_sign
       else
-        account.start_balance_with_sign
+        0
       end
     end
 

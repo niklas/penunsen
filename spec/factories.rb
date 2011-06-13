@@ -1,6 +1,4 @@
 Factory.define :bank_account do |f|
-  f.start_balance 0
-  f.start_balance_sign 'credit' # optimistic
 end
 Factory.define :statement do |f|
   f.association :account, :factory => :bank_account

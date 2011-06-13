@@ -21,7 +21,10 @@ Feature: Import Statements
        | Donald   | 1999-09-01 | 1999-09-01 12:00 |
 
   Scenario: Fills in resulting balance for every statement
-    Given a bank account exists with start_balance: 100, start_balance_sign: "credit"
+    Given a bank account exists
+      And the following statements exist:
+        | details | amount | funds_code | balance_amount | balance_sign | fake |
+        | Fake    | 100    | credit     | 100            | credit       | true |
      When I import the following statements into the bank account:
        | details | amount | funds_code |
        | Lottery | 1000   | credit     |
@@ -39,24 +42,23 @@ Feature: Import Statements
     
 
  Scenario: guesses account's start balance from first statement with a balance
-    Given a bank account exists with start_balance: nil, start_balance_sign: nil
+    Given a bank account exists
      When I import the following statements into the bank account:
        | details       | amount | funds_code | balance_amount | balance_sign |
        | 0th Birthday  | 1000   | credit     |                |              |
        | 1rst Birthday | 2000   | credit     | 2500           | credit       |
      Then the bank account should have exactly the following statements:
-       | details       | balance_amount | balance_sign |
-       | 1rst Birthday | 2500           | credit       |
-       | 0th Birthday  | 500            | credit       |
-      And the bank_account's start_balance_with_sign should be -500
+       | details       | balance_amount | balance_sign | amount | funds_code | fake |
+       | 1rst Birthday | 2500           | credit       | 2000   | credit     |      |
+       | 0th Birthday  | 500            | credit       | 1000   | credit     |      |
+       | Fake          | 500            | debit        | 500    | debit      | true |
 
-  Scenario: guesses account's start balance from amount of first entry if no balances in statements
-    Given a bank account exists with start_balance: nil, start_balance_sign: nil
+  Scenario: assumes no previous statements if no balances in statements
+    Given a bank account exists
      When I import the following statements into the bank account:
        | details      | amount | funds_code |
        | 0th Birthday | 1000   | credit     |
      Then the bank account should have exactly the following statements:
-       | details      | balance_amount | balance_sign |
-       | 0th Birthday | 1000           | credit       |
-      And the bank_account's start_balance_with_sign should be 0
+       | details      | balance_amount | balance_sign | amount | funds_code | fake |
+       | 0th Birthday | 1000           | credit       | 1000   | credit     |      |
 

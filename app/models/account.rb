@@ -1,11 +1,6 @@
 class Account < ActiveRecord::Base
   has_many :statements, :order => 'entered_on DESC, entered_at DESC, id DESC', :inverse_of => :account
 
-  validates_inclusion_of :start_balance_sign, :in => %w(credit debit), :if => :start_balance?
-  validates_numericality_of :start_balance, :allow_nil => true
-
-  separately_signed :start_balance, :sign => :start_balance_sign, :amount => :start_balance
-
   class Import
     attr_reader :account, :given, :prepared
 
@@ -19,10 +14,6 @@ class Account < ActiveRecord::Base
     def run!
       account.transaction do
         prepare!
-
-        if account.start_balance_with_sign.blank?
-          account.start_balance_with_sign = start_balance || 0
-        end
 
         distribute_over_day!
 
