@@ -9,11 +9,14 @@ class Account < ActiveRecord::Base
       @account    = account
       @given      = given
       @prepared   = []
+      @duplicates = []
     end
 
     def run!
       account.transaction do
         prepare!
+
+        remove_duplicates!
 
         fix_fakes_after!
 
@@ -111,6 +114,11 @@ class Account < ActiveRecord::Base
         0
       end
     end
+
+    def remove_duplicates!
+      @duplicates, @prepared = prepared.partition(&:duplicate_exists?)
+    end
+
     def fix_balance_before!
       if start_balance.present?
         if start_balance != actual_balance

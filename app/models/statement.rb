@@ -84,4 +84,26 @@ class Statement < ActiveRecord::Base
   def to_s
     "#{self.class} #{entered_at} #{amount_with_sign} #{details}"
   end
+
+  def duplicate_exists?
+    others.where(:entered_on => entered_on).all.any? do |other|
+      distance_to(other) < 10.0
+    end
+  end
+
+  def distance_to(other)
+    self.class.metric.distance(self.to_metric, other.to_metric)
+  end
+
+  def self.metric
+    @@metric ||= HintableLevenshtein.new
+  end
+
+  def to_metric
+    %Q~#{amount_with_sign} #{account_holder} #{account_number} #{bank_code} #{prima_nota} #{description} #{details}~
+  end
+
+  def others
+    account.statements
+  end
 end
